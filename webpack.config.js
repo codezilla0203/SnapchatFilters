@@ -29,8 +29,27 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      // Avoid HtmlWebpackPlugin child compiler on CI by inlining the template
-      templateContent: () => fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8'),
+      // Inline template with a safe fallback when public/index.html is missing (e.g., CI checkout issues)
+      templateContent: () => {
+        const tplPath = path.join(__dirname, 'public', 'index.html');
+        if (fs.existsSync(tplPath)) {
+          return fs.readFileSync(tplPath, 'utf8');
+        }
+        // Fallback minimal HTML (SPA mount point)
+        return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snapchat-Style Swipeable Filters Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>html,body,#root{height:100%;margin:0;background:#000}</style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  </html>`;
+      },
       filename: 'index.html',
       minify: false,
       inject: 'body'
