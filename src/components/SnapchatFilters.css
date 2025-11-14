@@ -1,0 +1,263 @@
+.snapchat-filters {
+  position: fixed;
+  bottom: 80px;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  padding: 20px 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.filters-container {
+  width: 100%;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.filters-container:active {
+  cursor: grabbing;
+}
+
+.filters-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 0 20px;
+  min-height: 100px;
+}
+
+.filter-item {
+  position: relative;
+  min-width: 70px;
+  height: 70px;
+  border-radius: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.filter-item:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.filter-item.active {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  min-width: 80px;
+  height: 80px;
+  border-radius: 40px;
+}
+
+.filter-icon {
+  font-size: 32px;
+  margin-bottom: 2px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  z-index: 2;
+  position: relative;
+}
+
+.filter-item.active .filter-icon {
+  font-size: 36px;
+}
+
+.filter-name {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  position: relative;
+  white-space: nowrap;
+}
+
+.active-indicator {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.5);
+}
+
+.filter-glow {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50px;
+  opacity: 0.3;
+  filter: blur(15px);
+  z-index: 0;
+}
+
+.swipe-indicators {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.swipe-indicator {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.swipe-indicator.left {
+  animation: pulseLeft 2s ease-in-out infinite;
+}
+
+.swipe-indicator.right {
+  animation: pulseRight 2s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes pulseLeft {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-5px);
+  }
+}
+
+@keyframes pulseRight {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(5px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .snapchat-filters {
+    bottom: 70px;
+    padding: 15px 0;
+  }
+  
+  .filters-wrapper {
+    gap: 12px;
+    padding: 0 15px;
+    min-height: 80px;
+  }
+  
+  .filter-item {
+    min-width: 60px;
+    height: 60px;
+    border-radius: 30px;
+  }
+  
+  .filter-item.active {
+    min-width: 70px;
+    height: 70px;
+    border-radius: 35px;
+  }
+  
+  .filter-icon {
+    font-size: 28px;
+  }
+  
+  .filter-item.active .filter-icon {
+    font-size: 32px;
+  }
+  
+  .filter-name {
+    font-size: 11px;
+  }
+  
+  .swipe-indicator {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filters-wrapper {
+    gap: 10px;
+    padding: 0 10px;
+  }
+  
+  .filter-item {
+    min-width: 55px;
+    height: 55px;
+    border-radius: 27px;
+  }
+  
+  .filter-item.active {
+    min-width: 65px;
+    height: 65px;
+    border-radius: 32px;
+  }
+  
+  .filter-icon {
+    font-size: 24px;
+  }
+  
+  .filter-item.active .filter-icon {
+    font-size: 28px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .filter-item {
+    border-width: 3px;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .filter-item.active {
+    border-color: white;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .filter-item,
+  .filter-icon,
+  .filter-glow {
+    transition: none;
+    animation: none;
+  }
+  
+  .swipe-indicator.left,
+  .swipe-indicator.right {
+    animation: none;
+  }
+}
