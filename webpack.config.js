@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -28,9 +29,9 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html',
+      // Avoid HtmlWebpackPlugin child compiler on CI by inlining the template
+      templateContent: () => fs.readFileSync(path.resolve(__dirname, 'public/index.html'), 'utf8'),
       filename: 'index.html',
-      // Disable minification to avoid rare child compilation issues on CI
       minify: false,
       inject: 'body'
     })

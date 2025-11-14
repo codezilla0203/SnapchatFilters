@@ -31,4 +31,8 @@
   "keywords": ["react", "snapchat", "filters", "swipe", "framer-motion", "gestures"],
   "author": "Michael",
   "license": "MIT"
+  ,
+  "engines": {
+    "node": ">=18"
+  }
 }
