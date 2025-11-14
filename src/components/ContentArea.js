@@ -1,72 +1,59 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { categories } from './SnapchatFilters';
 import './ContentArea.css';
 
-const contentData = {
-  all: {
-    title: '✨ All Filters',
-    description: 'Explore every amazing filter in our collection',
-    items: ['😎 Face filters', '🐶 Animal masks', '🦄 Fantasy effects', '📷 Vintage vibes'],
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-  },
-  faces: {
-    title: '😎 Face Filters',
-    description: 'Transform your selfies with cool face effects',
-    items: ['🤓 Nerd glasses', '😍 Heart eyes', '🤡 Clown nose', '👑 Royal crown'],
-    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-  },
-  animals: {
-    title: '🐶 Animal Filters',
-    description: 'Become your favorite animal with these cute filters',
-    items: ['🐶 Puppy dog', '🐱 Kitty cat', '🐰 Bunny ears', '🦊 Fox face'],
-    background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
-  },
-  fantasy: {
-    title: '🦄 Fantasy Filters',
-    description: 'Enter a magical world with mystical effects',
-    items: ['🦄 Unicorn horn', '🧚‍♀️ Fairy wings', '🐉 Dragon breath', '✨ Sparkle magic'],
-    background: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)'
-  },
-  vintage: {
-    title: '📷 Vintage Filters',
-    description: 'Classic retro effects for that nostalgic feel',
-    items: ['📺 Old TV', '📼 VHS glitch', '📻 Radio waves', '🎞️ Film grain'],
-    background: 'linear-gradient(135deg, #d299c2 0%, #fef9d7 100%)'
-  },
-  neon: {
-    title: '⚡ Neon Filters',
-    description: 'Electric vibes with glowing neon effects',
-    items: ['💥 Lightning bolt', '🌈 Neon rainbow', '🔥 Electric fire', '💎 Glowing gems'],
-    background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-  },
-  space: {
-    title: '🌌 Space Filters',
-    description: 'Cosmic adventures await in the galaxy',
-    items: ['🚀 Rocket ship', '👽 Alien face', '🌟 Shooting star', '🪐 Planet rings'],
-    background: 'linear-gradient(135deg, #3b41c5 0%, #a981bb 50%, #ffc8a9 100%)'
-  },
-  nature: {
-    title: '🌿 Nature Filters',
-    description: 'Connect with the beauty of the natural world',
-    items: ['🌸 Flower crown', '🦋 Butterfly wings', '🌱 Growing plants', '☀️ Sun rays'],
-    background: 'linear-gradient(135deg, #96fbc4 0%, #f9f586 100%)'
-  },
-  party: {
-    title: '🎉 Party Filters',
-    description: 'Celebrate every moment with fun party effects',
-    items: ['🎊 Confetti burst', '🎈 Balloon pop', '🎂 Birthday cake', '🥳 Party hat'],
-    background: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)'
-  },
-  food: {
-    title: '🍕 Food Filters',
-    description: 'Delicious effects that will make you hungry',
-    items: ['🍕 Pizza slice', '🍔 Burger bite', '🍦 Ice cream', '🎂 Sweet treats'],
-    background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'
-  }
-};
+// Sample data items to be filtered by categories
+const items = [
+  { id: 1, label: '🤓 Nerd Glasses', categories: ['faces'] },
+  { id: 2, label: '😍 Heart Eyes', categories: ['faces'] },
+  { id: 3, label: '🤡 Clown Nose', categories: ['faces','party'] },
+  { id: 4, label: '👑 Royal Crown', categories: ['faces','fantasy'] },
+  { id: 5, label: '🐶 Puppy Dog', categories: ['animals'] },
+  { id: 6, label: '🐱 Kitty Cat', categories: ['animals'] },
+  { id: 7, label: '🐰 Bunny Ears', categories: ['animals','fantasy'] },
+  { id: 8, label: '� Fox Face', categories: ['animals'] },
+  { id: 9, label: '🦄 Unicorn Horn', categories: ['fantasy'] },
+  { id: 10, label: '🧚‍♀️ Fairy Wings', categories: ['fantasy','nature'] },
+  { id: 11, label: '🐉 Dragon Breath', categories: ['fantasy'] },
+  { id: 12, label: '✨ Sparkle Magic', categories: ['fantasy','party'] },
+  { id: 13, label: '📺 Old TV', categories: ['vintage'] },
+  { id: 14, label: '📼 VHS Glitch', categories: ['vintage','neon'] },
+  { id: 15, label: '📻 Radio Waves', categories: ['vintage'] },
+  { id: 16, label: '🎞️ Film Grain', categories: ['vintage'] },
+  { id: 17, label: '⚡ Lightning Bolt', categories: ['neon'] },
+  { id: 18, label: '🌈 Neon Rainbow', categories: ['neon','party'] },
+  { id: 19, label: '🔥 Electric Fire', categories: ['neon'] },
+  { id: 20, label: '💎 Glowing Gems', categories: ['neon','fantasy'] },
+  { id: 21, label: '🚀 Rocket Ship', categories: ['space'] },
+  { id: 22, label: '👽 Alien Face', categories: ['space'] },
+  { id: 23, label: '🌟 Shooting Star', categories: ['space','fantasy'] },
+  { id: 24, label: '🪐 Planet Rings', categories: ['space'] },
+  { id: 25, label: '� Flower Crown', categories: ['nature','faces'] },
+  { id: 26, label: '🦋 Butterfly Wings', categories: ['nature','fantasy'] },
+  { id: 27, label: '🌱 Growing Plants', categories: ['nature'] },
+  { id: 28, label: '☀️ Sun Rays', categories: ['nature'] },
+  { id: 29, label: '🎊 Confetti Burst', categories: ['party'] },
+  { id: 30, label: '🎈 Balloon Pop', categories: ['party'] },
+  { id: 31, label: '🎂 Birthday Cake', categories: ['party','food'] },
+  { id: 32, label: '🥳 Party Hat', categories: ['party'] },
+  { id: 33, label: '🍕 Pizza Slice', categories: ['food'] },
+  { id: 34, label: '🍔 Burger Bite', categories: ['food'] },
+  { id: 35, label: '🍦 Ice Cream', categories: ['food'] },
+  { id: 36, label: '� Sweet Treats', categories: ['food','party'] }
+];
 
 const ContentArea = ({ activeFilter }) => {
-  const content = contentData[activeFilter] || contentData.all;
+  const activeCategory = categories.find(c => c.id === activeFilter) || categories[0];
+
+  const filteredItems = useMemo(() => {
+    if (activeFilter === 'all') return items;
+    return items.filter(item => item.categories.includes(activeFilter));
+  }, [activeFilter]);
+
+  const background = activeCategory.gradient;
+  const title = `${activeCategory.icon} ${activeCategory.name} Filters`;
+  const description = activeFilter === 'all' ? 'Explore every amazing filter in our collection' : `Showing ${filteredItems.length} ${activeCategory.name.toLowerCase()} filter${filteredItems.length === 1 ? '' : 's'}`;
 
   return (
     <div className="content-area">
@@ -74,7 +61,7 @@ const ContentArea = ({ activeFilter }) => {
         <motion.div
           key={activeFilter}
           className="content-wrapper"
-          style={{ background: content.background }}
+          style={{ background }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
@@ -86,8 +73,8 @@ const ContentArea = ({ activeFilter }) => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
           >
-            <h2>{content.title}</h2>
-            <p>{content.description}</p>
+            <h2>{title}</h2>
+            <p>{description}</p>
           </motion.div>
 
           <motion.div 
@@ -105,9 +92,9 @@ const ContentArea = ({ activeFilter }) => {
               }
             }}
           >
-            {content.items.map((item, index) => (
+            {filteredItems.map((item) => (
               <motion.div
-                key={index}
+                key={item.id}
                 className="content-item"
                 variants={{
                   hidden: { opacity: 0, y: 20 },
@@ -120,7 +107,7 @@ const ContentArea = ({ activeFilter }) => {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span>{item}</span>
+                <span>{item.label}</span>
               </motion.div>
             ))}
           </motion.div>

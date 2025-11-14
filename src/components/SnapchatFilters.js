@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 import './SnapchatFilters.css';
 
@@ -75,25 +75,48 @@ const filterCategories = [
   }
 ];
 
+// Export categories so other modules (e.g. filtering logic) can reuse them
+export const categories = filterCategories;
+
+const VELOCITY_FLICK_THRESHOLD = 800; // px/sec
+const OFFSET_SWIPE_THRESHOLD = 80; // px
+
 const SnapchatFilters = ({ activeFilter, onFilterChange }) => {
   const [dragX, setDragX] = useState(0);
   const [isPressed, setIsPressed] = useState(false);
   const containerRef = useRef(null);
   const dragControls = useDragControls();
+  const [announce, setAnnounce] = useState('');
+
+  // Announce selected category for screen readers
+  useEffect(() => {
+    const active = filterCategories.find(f => f.id === activeFilter);
+    if (active) setAnnounce(`Selected ${active.name} category`);
+  }, [activeFilter]);
+
+  const moveToIndex = useCallback((nextIndex) => {
+    if (nextIndex >= 0 && nextIndex < filterCategories.length) {
+      onFilterChange(filterCategories[nextIndex].id);
+    }
+  }, [onFilterChange]);
 
   const handleDragEnd = (event, info) => {
     setIsPressed(false);
-    const threshold = 100;
     const currentIndex = filterCategories.findIndex(filter => filter.id === activeFilter);
-    
-    if (info.offset.x > threshold && currentIndex > 0) {
-      // Swiped right - go to previous filter
-      onFilterChange(filterCategories[currentIndex - 1].id);
-    } else if (info.offset.x < -threshold && currentIndex < filterCategories.length - 1) {
-      // Swiped left - go to next filter
-      onFilterChange(filterCategories[currentIndex + 1].id);
+    const { offset, velocity } = info;
+
+    // Flick detection using velocity first
+    if (velocity.x > VELOCITY_FLICK_THRESHOLD && currentIndex > 0) {
+      moveToIndex(currentIndex - 1);
+    } else if (velocity.x < -VELOCITY_FLICK_THRESHOLD && currentIndex < filterCategories.length - 1) {
+      moveToIndex(currentIndex + 1);
+    } else if (offset.x > OFFSET_SWIPE_THRESHOLD && currentIndex > 0) {
+      moveToIndex(currentIndex - 1);
+    } else if (offset.x < -OFFSET_SWIPE_THRESHOLD && currentIndex < filterCategories.length - 1) {
+      moveToIndex(currentIndex + 1);
     }
-    
+
+    // Snap back
     setDragX(0);
   };
 
@@ -101,11 +124,43 @@ const SnapchatFilters = ({ activeFilter, onFilterChange }) => {
     onFilterChange(filterId);
   };
 
+  // Keyboard navigation (arrow keys + Home/End)
+  const handleKeyDown = (e) => {
+    const currentIndex = filterCategories.findIndex(f => f.id === activeFilter);
+    switch (e.key) {
+      case 'ArrowRight':
+        e.preventDefault();
+        moveToIndex(currentIndex + 1);
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        moveToIndex(currentIndex - 1);
+        break;
+      case 'Home':
+        e.preventDefault();
+        moveToIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        moveToIndex(filterCategories.length - 1);
+        break;
+      default:
+        break;
+    }
+  };
+
   const activeIndex = filterCategories.findIndex(filter => filter.id === activeFilter);
 
   return (
-    <div className="snapchat-filters">
-      <div className="filters-container" ref={containerRef}>
+    <div className="snapchat-filters" role="group" aria-label="Category filters">
+      <div 
+        className="filters-container" 
+        ref={containerRef}
+        role="listbox"
+        aria-activedescendant={`filter-${activeFilter}`}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+      >
         <motion.div 
           className="filters-wrapper"
           drag="x"
@@ -129,6 +184,10 @@ const SnapchatFilters = ({ activeFilter, onFilterChange }) => {
                 key={filter.id}
                 className={`filter-item ${isActive ? 'active' : ''}`}
                 onClick={() => handleFilterClick(filter.id)}
+                id={`filter-${filter.id}`}
+                role="option"
+                aria-selected={isActive}
+                tabIndex={isActive ? 0 : -1}
                 whileHover={{ scale: scale * 1.1 }}
                 whileTap={{ scale: scale * 0.9 }}
                 animate={{
@@ -233,6 +292,7 @@ const SnapchatFilters = ({ activeFilter, onFilterChange }) => {
           </motion.div>
         )}
       </div>
+      <div className="sr-only" aria-live="polite">{announce}</div>
     </div>
   );
 };

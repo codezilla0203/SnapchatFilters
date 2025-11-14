@@ -9,6 +9,8 @@ An interactive React application featuring Snapchat-style swipeable category fil
 - **Creative filter categories**: 10 unique categories with custom icons and gradients
 - **Mobile-friendly**: Responsive design with touch gesture support
 - **Interactive content**: Dynamic content area that changes with filter selection
+- **Real filtering logic**: Items are filtered by category rather than static text
+- **Keyboard & screen reader friendly**: ARIA roles, focus, live announcements
 
 ## 🚀 Quick Start
 
@@ -40,6 +42,25 @@ npm run build
 2. **Tap** any filter to select it instantly
 3. **Watch** the content area transform with smooth animations
 4. **Enjoy** the responsive design on mobile devices
+5. **Keyboard navigation**: Focus the filter bar and use Left/Right/Home/End
+
+### Component Integration (Quick API)
+
+`<SnapchatFilters />` expects:
+
+```
+activeFilter: string (category id)
+onFilterChange: (id: string) => void
+```
+
+Categories data exported as `categories` from `SnapchatFilters.js` so you can reuse it or replace it with your own.
+
+### Accessibility
+
+- Filter list: `role="listbox"`, items: `role="option"`
+- Active item announced via `aria-live`
+- Keyboard: ArrowLeft / ArrowRight / Home / End
+- Reduced motion respected for users with that preference by OS
 
 ## 🛠️ Technologies Used
 
@@ -65,15 +86,15 @@ npm run build
 ## 💡 Key Features Implemented
 
 ### Swipe Gestures
-- Horizontal drag detection using Framer Motion
-- Smooth transitions between filter categories
-- Visual feedback during swipe actions
+- Horizontal drag + velocity-based flick detection (fast swipe advances)
+- Spring snap-back after release
+- Visual scale, depth, glow and rotation feedback
 
 ### Animations
-- Scale and rotation effects on filter selection
-- Staggered content animations
-- Floating elements with continuous motion
-- Color transitions and gradient effects
+- Scale, rotation, glow pulsation for active filter
+- Staggered list reveal, hover wiggle
+- Floating decorative dots (reduces motion aware)
+- Gradient-driven dynamic backgrounds
 
 ### Mobile Optimization
 - Touch-friendly gesture controls
@@ -99,6 +120,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ### Alternative Installation
 You can also use yarn instead of npm:
+### Execution Policy (Cannot run npm scripts)
+If you're blocked by PowerShell policy, directly invoke webpack:
+```
+node node_modules/webpack-cli/bin/cli.js serve --mode development --port 8080 --host 0.0.0.0
+```
+Then open http://localhost:8080
+
 ```bash
 yarn install
 yarn start
@@ -124,7 +152,8 @@ src/
 
 This demo showcases:
 - **Real swipe detection** with threshold-based navigation
-- **Dynamic content updates** based on selected filter
+- **Velocity-based flick advancement** for natural gestures
+- **Dynamic content updates** filtering items by category
 - **Smooth visual feedback** for all interactions
 - **Professional UI/UX** following modern design principles
 - **Cross-platform compatibility** (desktop and mobile)
