@@ -29,7 +29,10 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      filename: 'index.html'
+      filename: 'index.html',
+      // Disable minification to avoid rare child compilation issues on CI
+      minify: false,
+      inject: 'body'
     })
   ],
   devServer: {
@@ -50,5 +53,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx']
+  },
+  stats: {
+    children: true,
+    errorDetails: true
   }
 };
